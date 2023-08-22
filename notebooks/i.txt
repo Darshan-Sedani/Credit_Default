@@ -1,0 +1,103 @@
+integer_transformer = Pipeline(steps = [
+   ('imputer', SimpleImputer(strategy = 'most_frequent')),
+   ('scaler', StandardScaler())])
+
+categorical_transformer = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='most_frequent')),
+    ('onehot', OneHotEncoder(handle_unknown='ignore'))
+])
+
+preprocessor = ColumnTransformer(
+   transformers=[
+       ('ints', integer_transformer, integer_features),
+       ('cat', categorical_transformer, categorical_features)])
+
+base = Pipeline(steps=[('preprocessor', preprocessor),
+                     ('classifier', RandomForestClassifier())])
+
+# Preprocessing of training data, fit model 
+base.fit(X_train, y_train)
+
+
+
+
+
+
+num_pipeline=Pipeline(
+    steps=[
+    ('imputer',SimpleImputer(strategy='median')),
+    ('scaler',StandardScaler())
+])
+
+cat_pipeline=Pipeline(
+    steps=[
+    ('imputer',SimpleImputer(strategy='most_frequent')),
+    ('onehotencoder',OneHotEncoder(drop='first')),
+    ('scaler',StandardScaler())
+    ])
+
+ord_pipeline=Pipeline(
+    steps=[
+    ('imputer',SimpleImputer(strategy='most_frequent')),
+    ('ordinalencoder',OrdinalEncoder(categories=[ord_ranks])),
+    ('scaler',StandardScaler())
+    ])
+
+preprocessor = ColumnTransformer(
+    [
+        ('num_pipeline',num_pipeline,num_cols),
+        ('cat_pipeline',cat_pipeline,cat_cols),
+        ('ord_pipeline',ord_pipeline,ord_cols)  
+    ]
+)
+
+
+
+X_train,y_train,X_test,y_test = train_test_split(X,y,test_size=0.3,random_state=42)
+X_train = preprocessor.fit_transform(X_train)
+X_test = preprocessor.transform(X_test)
+X_train
+
+
+
+
+num_cols = X.select_dtypes(exclude="object").columns
+print(num_cols)
+
+## Numerical Pipeline
+num_pipeline=Pipeline(
+    steps=[
+    ('imputer',SimpleImputer(strategy='median')),
+    ('scaler',StandardScaler())
+    ]
+)
+
+preprocessor=ColumnTransformer([
+('num_pipeline',num_pipeline,num_cols)
+])
+
+print(X_train.shape)
+print(X_train.head(2))
+
+
+
+#Normal Data
+Logistic Regression Accuracy: 0.5745773592980954
+Decision Tree Accuracy: 0.7478065482559384
+Random Forest Accuracy: 0.8423924673657179
+XGB Accuracy: 0.6795420500748983
+# StandardScaler Data
+Logistic Regression Accuracy: 0.7179542050074899
+Decision Tree Accuracy: 0.749518510592767
+Random Forest Accuracy: 0.8443184249946502
+XGBoost Accuracy: 0.8229188957842928
+# SMOTE Data
+Logistic Regression Accuracy: 0.5497539054140809
+Decision Tree Accuracy: 0.43034453242028675
+Random Forest Accuracy: 0.5270704044511021
+XGBoost Accuracy: 0.5018189599828804
+#SMOTE Data with StandardScaler
+Logistic Regression Accuracy: 0.7193451744061631
+Decision Tree Accuracy: 0.7582923175690135
+Random Forest Accuracy: 0.8462443826235823
+XGBoost Accuracy: 0.5023539482131393
